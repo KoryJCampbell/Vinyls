@@ -1,22 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Linking, Share, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { getAlbumById } from '../utils/storage';
-import { colors, sharedStyles } from '../utils/styles';
-import type { Album } from '../types';
+import { getAlbumById, saveAlbum } from '../utils/storage';
+import { colors } from '../utils/styles';
+import type { Album, Condition, PurchaseInfo } from '../types';
+import ConditionRating from '../components/ConditionRating';
+import ValueTracker from '../components/ValueTracker';
+import { shareAlbum } from '../utils/sharing';
 
 export default function Details() {
   const { id } = useLocalSearchParams();
   const [album, setAlbum] = useState<Album | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadAlbum();
   }, [id]);
 
   const loadAlbum = async () => {
-    if (id) {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      if (!id) {
+        throw new Error('No album ID provided');
+      }
+      
       const albumData = await getAlbumById(Number(id));
+      if (!albumData) {
+        throw new Error('Album not found');
+      }
+      
       setAlbum(albumData);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load album');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -25,6 +45,56 @@ export default function Details() {
       await Linking.openURL(album.spotifyUrl);
     }
   };
+
+  const handleConditionChange = async (type: 'vinyl' | 'sleeve', value: Condition['vinyl']) => {
+    if (!album) return;
+    
+    const updatedAlbum: Album = {
+      ...album,
+      condition: {
+        ...album.condition,
+        [type]: value,
+      },
+    };
+    await saveAlbum(updatedAlbum);
+    setAlbum(updatedAlbum);
+  };
+
+  const handleValueChange = async (value: PurchaseInfo) => {
+    if (!album) return;
+    
+    const updatedAlbum: Album = {
+      ...album,
+      purchaseInfo: value,
+    };
+    await saveAlbum(updatedAlbum);
+    setAlbum(updatedAlbum);
+  };
+
+  const handleShare = () => {
+    if (album) {
+      shareAlbum(album);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.errorText}>{error}</Text>
+        <TouchableOpacity style={styles.retryButton} onPress={loadAlbum}>
+          <Text style={styles.retryButtonText}>Retry</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   if (!album) {
     return (
@@ -50,6 +120,32 @@ export default function Details() {
         {album.year > 0 && (
           <Text style={styles.year}>{album.year}</Text>
         )}
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Condition</Text>
+          <ConditionRating
+            label="Vinyl"
+            value={album.condition?.vinyl || 'VG'}
+            onChange={(value) => handleConditionChange('vinyl', value)}
+          />
+          <ConditionRating
+            label="Sleeve"
+            value={album.condition?.sleeve || 'VG'}
+            onChange={(value) => handleConditionChange('sleeve', value)}
+          />
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Value</Text>
+          <ValueTracker
+            value={album.purchaseInfo || {
+              price: 0,
+              date: new Date().toISOString(),
+              seller: '',
+            }}
+            onChange={handleValueChange}
+          />
+        </View>
 
         {album.genres && album.genres.length > 0 && (
           <View style={styles.section}>
@@ -110,6 +206,10 @@ export default function Details() {
             </Text>
           </TouchableOpacity>
         )}
+
+        <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
+          <Text style={styles.shareButtonText}>Share Album</Text>
+        </TouchableOpacity>
 
         <View style={styles.metaSection}>
           <Text style={styles.metaText}>
@@ -213,6 +313,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  shareButton: {
+    backgroundColor: '#FF9500',
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginVertical: 16,
+  },
+  shareButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   metaSection: {
     marginTop: 24,
     paddingTop: 16,
@@ -223,6 +335,28 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.text.tertiary,
     textAlign: 'center',
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  errorText: {
+    color: colors.error,
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  retryButton: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: 'white',
+    fontWeight: '600',
   },
 });
 
