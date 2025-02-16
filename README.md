@@ -1,50 +1,113 @@
-# Welcome to your Expo app 👋
+# Vinyls - Your Digital Vinyl Collection Manager
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Vinyls is a mobile application built with React Native and Expo that helps you manage and track your vinyl record collection. With integrations to both Spotify and Discogs, it provides a comprehensive solution for vinyl enthusiasts.
 
-## Get started
+## Features
 
-1. Install dependencies
+- **Multiple Input Methods**
+  - Barcode scanning for quick album lookups
+  - Spotify integration for accurate metadata
+  - Manual entry with customizable fields
+  - Discogs database integration
 
-   ```bash
-   npm install
-   ```
+- **Rich Album Information**
+  - Cover artwork
+  - Track listings
+  - Release information
+  - Genre tags
+  - Record label details
+  - Direct Spotify links
 
-2. Start the app
+- **Collection Management**
+  - Search and filter your collection
+  - Sort by title, artist, or year
+  - View detailed album statistics
+  - Track your collection's growth
 
-   ```bash
-    npx expo start
-   ```
+- **Statistics Dashboard**
+  - Total albums count
+  - Distribution by decade
+  - Top artists in your collection
+  - Collection timeline
 
-In the output, you'll find options to open the app in a
+## Getting Started
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### Prerequisites
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- Node.js (v14 or newer)
+- npm or yarn
+- Expo CLI
+- iOS Simulator or Android Emulator (for development)
 
-## Get a fresh project
+### Installation
 
-When you're ready, run:
-
+1. Clone the repository:
 ```bash
-npm run reset-project
+git clone https://github.com/yourusername/vinyls.git
+cd vinyls
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2. Install dependencies:
+```bash
+npm install
+```
 
-## Learn more
+3. Create a `.env` file in the root directory with your API keys:
+```
+SPOTIFY_CLIENT_ID=your_spotify_client_id
+SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
+DISCOGS_API_KEY=your_discogs_api_key
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+4. Start the development server:
+```bash
+npx expo start
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Running the App
 
-## Join the community
+- Press `i` to open in iOS simulator
+- Press `a` to open in Android emulator
+- Scan the QR code with Expo Go app on your device
 
-Join our community of developers creating universal apps.
+## Project Structure
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```
+/app                 # Expo Router pages
+  ├── index.tsx      # Home screen
+  ├── add.tsx        # Add vinyl screen
+  ├── details.tsx    # Album details screen
+  └── stats.tsx      # Statistics screen
+/components          # Reusable React components
+/utils               # Utility functions and API clients
+/types              # TypeScript type definitions
+```
+
+## Tech Stack
+
+- React Native
+- Expo
+- TypeScript
+- AsyncStorage (local data persistence)
+- Spotify Web API
+- Discogs API
+- Expo Router (navigation)
+- Expo Camera (barcode scanning)
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- Spotify Web API for music metadata
+- Discogs API for vinyl database
+- Expo team for the amazing development tools
