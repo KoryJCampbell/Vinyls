@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image, TextInput } from "react-native";
 import { Link } from "expo-router";
-import { Album, getAlbums } from '../utils/storage';
+import { getAlbums } from '../utils/storage';
 import { vinylEvents } from '../utils/events';
+
+export type Album = {
+  id: number;
+  title: string;
+  artist: string;
+  year: number;
+  coverImage?: string;
+};
 
 export default function Index() {
   const [vinyls, setVinyls] = useState<Album[]>([]);

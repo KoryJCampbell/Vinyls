@@ -52,6 +52,8 @@ export default function Details() {
     const updatedAlbum: Album = {
       ...album,
       condition: {
+        vinyl: album.condition?.vinyl || 'VG',
+        sleeve: album.condition?.sleeve || 'VG',
         ...album.condition,
         [type]: value,
       },

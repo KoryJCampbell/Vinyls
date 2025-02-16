@@ -1,5 +1,5 @@
 import { Share } from 'react-native';
-import { Album } from '../types/album';
+import { Album } from '../types';
 
 export async function shareAlbum(album: Album) {
   const message = `Check out this vinyl in my collection!

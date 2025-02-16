@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { getAlbums, Album } from '../utils/storage';
+import { getAlbums } from '../utils/storage';
+import { Album } from '../types';
 
 const colors = {
   primary: '#007AFF',
